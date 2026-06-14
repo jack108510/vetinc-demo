@@ -1879,6 +1879,8 @@ let SB_KEY = SB_ANON_KEY; // will be user's JWT after login
   var avg=410.14;
   var monthRev=184267;
   var nc=17;
+  // Set dailyKpis directly so the chart renders
+  window.dailyKpis = DEMO_KPI;
   function apply(){
     setVal('ub-yesterday-rev',fmt(rev),'Revenue on Jun 13');
     setVal('ub-avg-txn',fmt(avg),'This week');
@@ -1892,6 +1894,8 @@ let SB_KEY = SB_ANON_KEY; // will be user's JWT after login
     setVal('ub-baseline-month','$15,355');
     var h=document.getElementById('lastUpdated');
     if(h) h.textContent='Jun 13  $'+Math.round(monthRev).toLocaleString()+' revenue  '+vis+' visits  307 visits';
+    // Rebuild the chart with our data
+    if(typeof buildAvgTxnChart==='function'){try{buildAvgTxnChart();}catch(e){}}
     // Daily revenue chart stats
     var dr=document.querySelector('.uplift-chart-stats');
     if(dr){
