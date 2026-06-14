@@ -1811,62 +1811,10 @@ const sb = window.supabase ? window.supabase.createClient(SB_URL, SB_ANON_KEY) :
 let SB_KEY = SB_ANON_KEY; // will be user's JWT after login
 
 // Auth: show login gate or proceed
-(async function initAuth() {
+// DEMO MODE: skip auth entirely, load straight in
+(function initAuth() {
   const gate = document.getElementById('loginGate');
-  if (!sb || !gate) return;
-
-  // Check for existing session
-  const { data: { session } } = await sb.auth.getSession();
-  if (session) {
-    SB_KEY = session.access_token;
-    gate.remove();
-    localStorage.setItem('vetinc_clinic_id', CLINIC_ID);
-    return;
-  }
-
-  // No session — show login gate, hide everything else
-  gate.style.display = 'none'; /* DEMO: skip login */
-  gate.style.position = 'fixed';
-  gate.style.inset = '0';
-  gate.style.zIndex = '9999';
-  gate.style.background = '#0b1220';
-  gate.style.alignItems = 'center';
-  gate.style.justifyContent = 'center';
-
-  // Hide main content
-  document.querySelector('header').style.display = 'none';
-  document.querySelector('nav').style.display = 'none';
-  document.querySelector('section').style.display = 'none';
-
-  // Sign in handler
-  document.getElementById('loginBtn').onclick = async () => {
-    const email = document.getElementById('loginEmail').value.trim();
-    const pass = document.getElementById('loginPass').value;
-    const errEl = document.getElementById('loginErr');
-    errEl.textContent = '';
-    if (!email || !pass) { errEl.textContent = 'Enter email and password'; return; }
-    try {
-      const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
-      if (error) throw error;
-      SB_KEY = data.session.access_token;
-      gate.remove();
-      document.querySelector('header').style.display = '';
-      document.querySelector('nav').style.display = '';
-      document.querySelectorAll('section').forEach(s => s.style.display = '');
-      localStorage.setItem('vetinc_clinic_id', CLINIC_ID);
-      window.location.reload();
-    } catch (e) {
-      errEl.textContent = e.message || 'Login failed';
-    }
-  };
-
-  // Guest mode (uses anon key — limited by RLS)
-  document.getElementById('guestBtn').onclick = () => {
-    gate.remove();
-    document.querySelector('header').style.display = '';
-    document.querySelector('nav').style.display = '';
-    document.querySelectorAll('section').forEach(s => s.style.display = '');
-  };
+  if (gate) gate.remove();
 })();
 
 async function sbFetch(table, params) {
@@ -1883,31 +1831,44 @@ async function sbFetch(table, params) {
 }
 
 async function sbFetchAll(table, params) {
- const headers = {}; // DEMO MODE
- let all = [], from = 0, total = Infinity;
- const MAX_ROWS = 50000; // Limit to 50K rows to avoid Supabase pagination issues
- while (from < total && all.length < MAX_ROWS) {
-   const to = from + 999;
-   try {
-     const res = { ok: true, json: async () => [] };
-     if (res.status === 500) {
-       console.warn(`SB 500 at offset ${from}, stopping pagination (got ${all.length} rows)`);
-       break;
-     }
-     if (!res.ok) throw new Error('SB ' + res.status + ' on ' + table);
-     const cr = res.headers.get('content-range');
-     if (cr) { const m = cr.match(/\/(\d+)/); if (m) total = parseInt(m[1]); }
-     const rows = await res.json();
-     if (!rows || rows.length === 0) break;
-     all = all.concat(rows);
-     from += rows.length;
-     if (rows.length < 1000) break;
-   } catch(e) {
-     console.warn(` Error fetching ${table} at offset ${from}:`, e.message, '(continuing with', all.length, 'rows)');
-     break;
+ // DEMO MODE: return hardcoded data
+ const p = params || '';
+ if (table === 'accounts' || table === 'std_transactions') return DEMO_DATA.chartData.map(d => ({txn_date: d.day, amount: Math.round(d.total_revenue * 100), type_flag: 'AT'}));
+ if (table === 'service_usage_agg' || table === 'std_service_prices') {
+   // Build from inflation + ninetynine demo data
+   const seen = new Set();
+   const rows = [];
+   for (const r of [...DEMO_DATA.inflation, ...DEMO_DATA.ninetynine]) {
+     if (seen.has(r.service_code)) continue;
+     seen.add(r.service_code);
+     rows.push({code: r.service_code, total_amount: r.expected_annual_uplift, total_qty: Math.round(r.expected_annual_uplift / r.suggested_price * 100) / 100, txn_count: Math.round(r.expected_annual_uplift / r.suggested_price), service_type: 'AT'});
    }
+   return rows;
  }
- return all;
+ if (table === 'prices') {
+   const seen = new Set();
+   const rows = [];
+   for (const r of [...DEMO_DATA.inflation, ...DEMO_DATA.ninetynine]) {
+     if (seen.has(r.service_code)) continue;
+     seen.add(r.service_code);
+     rows.push({treatment_code: r.service_code, price: r.suggested_price, updated_at: '2025-12-15'});
+   }
+   return rows;
+ }
+ if (table === 'treatments' || table === 'item_names') {
+   const seen = new Set();
+   const rows = [];
+   for (const r of [...DEMO_DATA.inflation, ...DEMO_DATA.ninetynine]) {
+     if (seen.has(r.service_code)) continue;
+     seen.add(r.service_code);
+     rows.push({code: r.service_code, name: r.service_name, type_flag: 'AT'});
+   }
+   return rows;
+ }
+ if (table === 'micro_margin_agg') return [];
+ if (table === 'items') return [];
+ if (table === 'std_daily_kpis') return DEMO_DATA.chartData;
+ return [];
 }
 
 //
