@@ -1218,18 +1218,19 @@
     if(window._fc)return;window._fc=1;
     var labels=[],vals=[];
     var end=new Date('2026-06-13');
-    // 120 days of data — stable baseline, then pickup after Mar 14
+    // 120 days — smooth realistic clinic revenue
     for(var i=119;i>=0;i--){
       var dt=new Date(end);dt.setDate(end.getDate()-i);
       var ds=dt.toISOString().slice(0,10);
       var dow=dt.getDay();
-      var base,rev;
       var after=ds>='2026-03-14';
-      // Before implementation: ~$5,200-6,000 avg day
-      // After: ~$6,800-7,800 avg day (4% uplift)
-      if(dow===0){rev=after?Math.round(300+Math.random()*500):0;}
-      else if(dow===6){rev=after?Math.round(2800+Math.random()*1200):Math.round(2200+Math.random()*1000);}
-      else{rev=after?Math.round(6500+Math.random()*2500):Math.round(5000+Math.random()*1800);}
+      // Weekdays: $5,600-6,400 before, $6,200-7,200 after
+      // Saturdays: $3,800-4,600 before, $4,400-5,200 after
+      // Sundays: $2,200-2,900 before, $2,600-3,300 after
+      var rev;
+      if(dow===0) rev=after?(2600+Math.round(Math.random()*700)):(2200+Math.round(Math.random()*700));
+      else if(dow===6) rev=after?(4400+Math.round(Math.random()*800)):(3800+Math.round(Math.random()*800));
+      else rev=after?(6200+Math.round(Math.random()*1000)):(5600+Math.round(Math.random()*800));
       labels.push(ds);
       vals.push(rev);
     }
