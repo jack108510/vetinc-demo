@@ -1894,47 +1894,8 @@ let SB_KEY = SB_ANON_KEY; // will be user's JWT after login
     setVal('ub-baseline-month','$15,355');
     var h=document.getElementById('lastUpdated');
     if(h) h.textContent='Jun 13  $'+Math.round(monthRev).toLocaleString()+' revenue  '+vis+' visits  307 visits';
-    // Direct chart render with stock-style data
-    var canvas=document.getElementById('avgTxnChart');
-    if(canvas && typeof Chart!=='undefined'){
-      if(window._avgChart) window._avgChart.destroy();
-      var days=90, labels=[], vals=[];
-      var end=new Date('2026-06-13');
-      for(var i=days-1;i>=0;i--){
-        var dt=new Date(end); dt.setDate(end.getDate()-i);
-        var dow=dt.getDay();
-        var rev;
-        if(dow===0) rev=Math.random()<0.3?Math.round(200+Math.random()*800):0;
-        else if(dow===6) rev=Math.round(1800+Math.random()*2400);
-        else rev=Math.round(4800+Math.random()*4400);
-        labels.push(dt.toISOString().slice(0,10));
-        vals.push(rev);
-      }
-      var ctx2=canvas.getContext('2d');
-      var grad=ctx2.createLinearGradient(0,0,0,250);
-      grad.addColorStop(0,'rgba(37,99,235,0.25)');
-      grad.addColorStop(1,'rgba(37,99,235,0.0)');
-      window._avgChart=new Chart(ctx2,{
-        type:'line',
-        data:{labels:labels,datasets:[{
-          data:vals,borderColor:'#2563eb',backgroundColor:grad,fill:true,
-          tension:0.35,pointRadius:0,pointHoverRadius:5,
-          pointHoverBackgroundColor:'#2563eb',pointHoverBorderColor:'#fff',
-          pointHoverBorderWidth:2,borderWidth:2.5
-        }]},
-        options:{
-          responsive:true,maintainAspectRatio:false,
-          interaction:{mode:'index',intersect:false},
-          plugins:{legend:{display:false},
-            tooltip:{backgroundColor:'rgba(15,23,42,0.95)',titleColor:'#fff',bodyColor:'#93c5fd',
-              borderColor:'rgba(37,99,235,0.3)',borderWidth:1,padding:10,displayColors:false,
-              callbacks:{title:function(c){return c[0].label;},label:function(c){return '$'+Math.round(c.parsed.y).toLocaleString();}}}
-          },
-          scales:{x:{display:false,grid:{display:false}},
-            y:{ticks:{callback:function(v){return '$'+(v/1000).toFixed(0)+'K';},color:'#94a3b8',font:{size:10}},grid:{color:'rgba(148,163,184,0.08)',drawBorder:false}}}
-        }
-      });
-    }
+    // Chart handled by async buildAvgTxnChart with DEMO_KPI data
+
     // Daily revenue chart stats
     var dr=document.querySelector('.uplift-chart-stats');
     if(dr){
