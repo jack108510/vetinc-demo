@@ -2032,6 +2032,34 @@ window.fetch=function(url,opts){
       else if(u.indexOf('id=eq.')>-1){ resp=[]; }
       else{ resp=DEMO_INFLATION.concat(DEMO_PRICE_ENDING); }
     }
+    // std_transactions — generate from KPI data (amounts in cents)
+    else if(table==='std_transactions'){
+      resp=[];
+      var svcCodes=DEMO_SERVICES.map(function(s){return s.code;});
+      DEMO_KPI.forEach(function(k){
+        if(k.total_revenue>0){
+          var numTxn=Math.min(k.total_transactions||_ri(30,90), 80);
+          var perTxn=Math.round(k.total_revenue/numTxn*100);
+          for(var t=0;t<numTxn;t++){
+            resp.push({
+              amount:perTxn+_ri(-500,500),
+              txn_date:k.day,
+              service_code:svcCodes[_ri(0,svcCodes.length-1)],
+              description:'Demo Service',
+              quantity:1,
+              category:'AT'
+            });
+          }
+        }
+      });
+      // Limit to reasonable size
+      resp=resp.slice(-5000);
+    }
+    // std_visits
+    else if(table==='std_visits'){ resp=DEMO_KPI.filter(function(k){return k.total_visits>0;}).map(function(k){
+      var out=[]; for(var v=0;v<k.total_visits;v++) out.push({visit_date:k.day,doctor:'Dr. Demo'});
+      return out;
+    }).flat(); }
     // std_campaign_results
     else if(table==='std_campaign_results'){
       // Return captured uplift data showing the success story
