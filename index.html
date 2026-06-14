@@ -1870,19 +1870,19 @@ let SB_KEY = SB_ANON_KEY; // will be user's JWT after login
 var _seed=42; function _rnd(){_seed=(_seed*1103515245+12345)&0x7fffffff; return _rnd/0x7fffffff; }
 function _ri(a,b){return Math.round(a+_rnd()*(b-a));}
 
-// Build 90 days of daily KPIs (2025-12-15 → 2026-03-14)
+// Build 90 days of daily KPIs (2026-06-12 → 2026-06-11)
 var DEMO_KPI=(function(){
-  var out=[], start=new Date('2025-12-15');
-  for(var d=0; d<90; d++){
-    var dt=new Date(start); dt.setDate(start.getDate()+d);
+  var out=[], end=new Date('2026-06-13'); // yesterday
+  for(var d=89; d>=0; d--){
+    var dt=new Date(end); dt.setDate(end.getDate()-d);
     var dow=dt.getDay(), rev, vis, txn, nc;
     var ds=dt.toISOString().slice(0,10);
-    // Post-implementation: revenue is ~4% higher due to price adjustments
+    // Shows recent data (June 2026). Revenue reflects 4% uplift from Vet INC
     if(dow===0){ rev=_rnd()<0.3?_ri(0,1200):0; vis=rev>0?_ri(1,5):0; }
     else if(dow===6){ rev=_ri(1800,4200); vis=_ri(5,12); }
     else { rev=_ri(4800,9200); vis=_ri(10,20); }
     txn=vis>0?_ri(Math.max(1,vis-3),vis+2):0;
-    nc=vis>0?_ri(0,2):0;
+    nc=vis>0?_ri(0,3):0;
     out.push({
       day:ds,
       total_revenue:rev,
@@ -1962,7 +1962,7 @@ var DEMO_SERVICES=[
 var DEMO_PRICES=DEMO_SERVICES.map(function(s,i){
   var match=DEMO_INFLATION.concat(DEMO_PRICE_ENDING).filter(function(x){return x.service_code===s.code;});
   var price=match.length?match[0].suggested_price:(s.total_amount/s.total_qty*1.1);
-  return {treatment_code:s.code,price:Math.round(price*100)/100,updated_at:'2025-12-15T10:00:00Z'};
+  return {treatment_code:s.code,price:Math.round(price*100)/100,updated_at:'2026-06-12T10:00:00Z'};
 });
 
 var DEMO_TREATMENTS=DEMO_SERVICES.map(function(s){
@@ -1987,7 +1987,7 @@ var DEMO_ACCOUNTS=(function(){
 var DEMO_COGS=(function(){
   var out=[];
   for(var d=0;d<90;d++){
-    var dt=new Date('2025-12-15'); dt.setDate(dt.getDate()+d);
+    var dt=new Date('2026-06-12'); dt.setDate(dt.getDate()+d);
     var ds=dt.toISOString().slice(0,10);
     var dow=dt.getDay();
     var rev=DEMO_KPI[d]?DEMO_KPI[d].total_revenue:0;
@@ -1999,7 +1999,7 @@ var DEMO_COGS=(function(){
 var DEMO_STAFF=(function(){
   var out=[];
   for(var d=0;d<90;d++){
-    var dt=new Date('2025-12-15'); dt.setDate(dt.getDate()+d);
+    var dt=new Date('2026-06-12'); dt.setDate(dt.getDate()+d);
     var ds=dt.toISOString().slice(0,10);
     var dow=dt.getDay();
     if(dow===0) continue;
@@ -2036,38 +2036,38 @@ window.fetch=function(url,opts){
     else if(table==='std_campaign_results'){
       // Return captured uplift data showing the success story
       resp=[
-        {clinic_id:'rosslyn',day:'2025-12-15',captured_uplift:3920.50},
-        {clinic_id:'rosslyn',day:'2026-01-15',captured_uplift:4713.42},
-        {clinic_id:'rosslyn',day:'2026-02-15',captured_uplift:4713.42},
-        {clinic_id:'rosslyn',day:'2026-03-15',captured_uplift:4713.42},
-        {clinic_id:'rosslyn',day:'2026-03-14',captured_uplift:5507.00},
-        {clinic_id:'rosslyn',day:'2026-03-13',captured_uplift:5507.00},
-        {clinic_id:'rosslyn',day:'2026-03-12',captured_uplift:5507.00},
-        {clinic_id:'rosslyn',day:'2026-03-11',captured_uplift:5507.00},
-        {clinic_id:'rosslyn',day:'2026-03-10',captured_uplift:5507.00},
-        {clinic_id:'rosslyn',day:'2026-03-09',captured_uplift:5507.00},
-        {clinic_id:'rosslyn',day:'2026-03-08',captured_uplift:5507.00},
-        {clinic_id:'rosslyn',day:'2026-03-07',captured_uplift:5507.00},
-        {clinic_id:'rosslyn',day:'2026-03-06',captured_uplift:5507.00},
-        {clinic_id:'rosslyn',day:'2026-03-05',captured_uplift:5507.00},
-        {clinic_id:'rosslyn',day:'2026-03-04',captured_uplift:5507.00},
-        {clinic_id:'rosslyn',day:'2026-03-03',captured_uplift:5507.00},
-        {clinic_id:'rosslyn',day:'2026-03-02',captured_uplift:5507.00},
-        {clinic_id:'rosslyn',day:'2026-03-01',captured_uplift:5507.00},
-        {clinic_id:'rosslyn',day:'2026-02-28',captured_uplift:4713.42},
-        {clinic_id:'rosslyn',day:'2026-02-27',captured_uplift:4713.42},
-        {clinic_id:'rosslyn',day:'2026-02-26',captured_uplift:4713.42},
-        {clinic_id:'rosslyn',day:'2026-02-25',captured_uplift:4713.42},
-        {clinic_id:'rosslyn',day:'2026-02-24',captured_uplift:4713.42},
-        {clinic_id:'rosslyn',day:'2026-02-23',captured_uplift:4713.42},
-        {clinic_id:'rosslyn',day:'2026-02-22',captured_uplift:4713.42},
-        {clinic_id:'rosslyn',day:'2026-02-21',captured_uplift:4713.42},
-        {clinic_id:'rosslyn',day:'2026-02-20',captured_uplift:4713.42},
-        {clinic_id:'rosslyn',day:'2026-02-19',captured_uplift:4713.42},
-        {clinic_id:'rosslyn',day:'2026-02-18',captured_uplift:4713.42},
-        {clinic_id:'rosslyn',day:'2026-02-17',captured_uplift:4713.42},
-        {clinic_id:'rosslyn',day:'2026-02-16',captured_uplift:4713.42},
-        {clinic_id:'rosslyn',day:'2026-02-15',captured_uplift:4713.42},
+        {clinic_id:'rosslyn',day:'2026-06-12',captured_uplift:3920.50},
+        {clinic_id:'rosslyn',day:'2026-04-15',captured_uplift:4713.42},
+        {clinic_id:'rosslyn',day:'2026-05-15',captured_uplift:4713.42},
+        {clinic_id:'rosslyn',day:'2026-06-12',captured_uplift:4713.42},
+        {clinic_id:'rosslyn',day:'2026-06-11',captured_uplift:5507.00},
+        {clinic_id:'rosslyn',day:'2026-06-10',captured_uplift:5507.00},
+        {clinic_id:'rosslyn',day:'2026-06-09',captured_uplift:5507.00},
+        {clinic_id:'rosslyn',day:'2026-06-08',captured_uplift:5507.00},
+        {clinic_id:'rosslyn',day:'2026-06-07',captured_uplift:5507.00},
+        {clinic_id:'rosslyn',day:'2026-06-06',captured_uplift:5507.00},
+        {clinic_id:'rosslyn',day:'2026-06-05',captured_uplift:5507.00},
+        {clinic_id:'rosslyn',day:'2026-06-04',captured_uplift:5507.00},
+        {clinic_id:'rosslyn',day:'2026-06-03',captured_uplift:5507.00},
+        {clinic_id:'rosslyn',day:'2026-06-02',captured_uplift:5507.00},
+        {clinic_id:'rosslyn',day:'2026-06-01',captured_uplift:5507.00},
+        {clinic_id:'rosslyn',day:'2026-05-31',captured_uplift:5507.00},
+        {clinic_id:'rosslyn',day:'2026-05-30',captured_uplift:5507.00},
+        {clinic_id:'rosslyn',day:'2026-05-29',captured_uplift:5507.00},
+        {clinic_id:'rosslyn',day:'2026-05-28',captured_uplift:4713.42},
+        {clinic_id:'rosslyn',day:'2026-05-27',captured_uplift:4713.42},
+        {clinic_id:'rosslyn',day:'2026-05-26',captured_uplift:4713.42},
+        {clinic_id:'rosslyn',day:'2026-05-25',captured_uplift:4713.42},
+        {clinic_id:'rosslyn',day:'2026-05-24',captured_uplift:4713.42},
+        {clinic_id:'rosslyn',day:'2026-05-23',captured_uplift:4713.42},
+        {clinic_id:'rosslyn',day:'2026-05-22',captured_uplift:4713.42},
+        {clinic_id:'rosslyn',day:'2026-05-21',captured_uplift:4713.42},
+        {clinic_id:'rosslyn',day:'2026-05-20',captured_uplift:4713.42},
+        {clinic_id:'rosslyn',day:'2026-05-19',captured_uplift:4713.42},
+        {clinic_id:'rosslyn',day:'2026-05-18',captured_uplift:4713.42},
+        {clinic_id:'rosslyn',day:'2026-05-17',captured_uplift:4713.42},
+        {clinic_id:'rosslyn',day:'2026-05-16',captured_uplift:4713.42},
+        {clinic_id:'rosslyn',day:'2026-05-15',captured_uplift:4713.42},
       ];
     }
     // daily_cogs
