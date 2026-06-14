@@ -2574,22 +2574,21 @@ async function buildC1() {
 
     const pending = items.filter(i => i.status === 'pending');
     const implemented = items.filter(i => i.status === 'implemented');
-    const totalUplift = pending.reduce((s, i) => s + (parseFloat(i.expected_annual_uplift) || 0), 0);
+    const totalUplift = items.reduce((s, i) => s + (parseFloat(i.expected_annual_uplift) || 0), 0);
     const implementedUplift = implemented.reduce((s, i) => s + (parseFloat(i.expected_annual_uplift) || 0), 0);
-    const urgent = pending.filter(i => (parseFloat(i.price_increase_pct) || 0) > 15);
+    const urgent = items.filter(i => (parseFloat(i.price_increase_pct) || 0) > 15);
 
     var badge = document.getElementById('c1Badge');
-    if (badge) badge.textContent = pending.length + ' items behind inflation  |  $' + Math.round(totalUplift).toLocaleString() + '/yr potential';
+    if (badge) badge.textContent = items.length + ' items  |  $' + Math.round(totalUplift).toLocaleString() + '/yr total  |  ' + implemented.length + ' implemented';
 
     var summary = document.getElementById('c1Summary');
     if (summary) summary.innerHTML = 
-      '<div class="stat-bar-item"><div class="stat-bar-label">Annual Potential</div><div class="stat-bar-value" style="color:var(--green)">$' + Math.round(totalUplift).toLocaleString() + '</div><div class="stat-bar-sub">total inflation catchup</div></div>' +
-      '<div class="stat-bar-item"><div class="stat-bar-label">Pending Items</div><div class="stat-bar-value">' + pending.length + '</div><div class="stat-bar-sub">awaiting review</div></div>' +
-      '<div class="stat-bar-item"><div class="stat-bar-label">Urgent (&gt;15%)</div><div class="stat-bar-value" style="color:var(--red)">' + urgent.length + '</div><div class="stat-bar-sub">immediate review</div></div>' +
-      '<div class="stat-bar-item"><div class="stat-bar-label">Implemented</div><div class="stat-bar-value" style="color:var(--green)">$' + Math.round(implementedUplift).toLocaleString() + '/yr</div><div class="stat-bar-sub">confirmed revenue</div></div>';
+      '<div class="stat-bar-item"><div class="stat-bar-label">Total Potential</div><div class="stat-bar-value" style="color:var(--primary)">$' + Math.round(totalUplift).toLocaleString() + '/yr</div><div class="stat-bar-sub">estimated uplift</div></div>' +
+      '<div class="stat-bar-item"><div class="stat-bar-label">Items</div><div class="stat-bar-value">' + items.length + '</div><div class="stat-bar-sub">total adjusted</div></div>' +
+      '<div class="stat-bar-item"><div class="stat-bar-label">Implemented</div><div class="stat-bar-value" style="color:var(--green)">$' + Math.round(implementedUplift).toLocaleString() + '/yr</div><div class="stat-bar-sub">estimated uplift expected</div></div>';
 
     var table = document.getElementById('c1Table');
-    if (table) table.innerHTML = pending.map(it => 
+    if (table) table.innerHTML = items.map(it => 
       '<tr>' +
       '<td>' + escHtml(it.service_code || '') + '</td>' +
       '<td>' + escHtml(it.service_name || '') + '</td>' +
@@ -2597,7 +2596,7 @@ async function buildC1() {
       '<td class="num" style="color:var(--orange);font-weight:700">+' + (parseFloat(it.price_increase_pct) || 0).toFixed(1) + '%</td>' +
       '<td class="num" style="color:var(--primary);font-weight:700">$' + (parseFloat(it.suggested_price) || 0).toFixed(2) + '</td>' +
       '<td class="num green" style="font-weight:700">$' + Math.round(parseFloat(it.expected_annual_uplift) || 0).toLocaleString() + '/yr</td>' +
-      '<td><button class="btn-activate primary" style="padding:2px 10px;font-size:0.75rem" onclick="approveItem(' + it.id + ')">Approve</button> <button class="btn-activate" style="padding:2px 10px;font-size:0.75rem;color:var(--red)" onclick="dismissItem(' + it.id + ')">Dismiss</button></td>' +
+      '<td><span class="badge active" style="padding:2px 10px;font-size:0.65rem">Implemented</span></td>' +
       '</tr>'
     ).join('');
 
@@ -2653,7 +2652,7 @@ async function buildC2() {
 
     const pending = items.filter(i => i.status === 'pending');
     const implemented = items.filter(i => i.status === 'implemented');
-    const totalUplift = pending.reduce((s, i) => s + (parseFloat(i.expected_annual_uplift) || 0), 0);
+    const totalUplift = items.reduce((s, i) => s + (parseFloat(i.expected_annual_uplift) || 0), 0);
     const implementedUplift = implemented.reduce((s, i) => s + (parseFloat(i.expected_annual_uplift) || 0), 0);
 
     var badge = document.getElementById('c2Badge');
