@@ -2857,7 +2857,7 @@ async function loadServiceData() {
   }
 }
 
-function buildAvgTxnChart() {
+function buildAvgTxnChart() { if(window._avgChart) return; // demo: already rendered
   const canvas = document.getElementById('avgTxnChart');
   if (!canvas || !window.dailyKpis || window.dailyKpis.length === 0) return;
 
