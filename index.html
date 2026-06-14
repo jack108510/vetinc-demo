@@ -1878,7 +1878,7 @@ let SB_KEY = SB_ANON_KEY; // will be user's JWT after login
   var vis=18;
   var avg=410.14;
   var monthRev=184267;
-  var nc=24;
+  var nc=17;
   function apply(){
     setVal('ub-yesterday-rev',fmt(rev),'Revenue on Jun 13');
     setVal('ub-avg-txn',fmt(avg),'This week');
@@ -2864,25 +2864,55 @@ function buildAvgTxnChart() {
   trendEl.className = 'stat-value ' + (trend >= 0 ? 'trend-up' : 'trend-down');
 
   if (window._avgChart) window._avgChart.destroy();
-  window._avgChart = new Chart(canvas.getContext('2d'), {
+  var ctx2 = canvas.getContext('2d');
+  var grad = ctx2.createLinearGradient(0, 0, 0, 250);
+  grad.addColorStop(0, 'rgba(37,99,235,0.25)');
+  grad.addColorStop(1, 'rgba(37,99,235,0.0)');
+  window._avgChart = new Chart(ctx2, {
     type: 'line',
     data: {
       labels,
       datasets: [{
         data: values,
         borderColor: '#2563eb',
-        backgroundColor: 'rgba(37,99,235,0.08)',
+        backgroundColor: grad,
         fill: true,
-        tension: 0.3,
+        tension: 0.35,
         pointRadius: 0,
-        borderWidth: 2
+        pointHoverRadius: 5,
+        pointHoverBackgroundColor: '#2563eb',
+        pointHoverBorderColor: '#fff',
+        pointHoverBorderWidth: 2,
+        borderWidth: 2.5
       }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => '$' + Math.round(ctx.parsed.y).toLocaleString() } } },
-      scales: { x: { display: false }, y: { ticks: { callback: v => '$' + (v/1000).toFixed(0) + 'K', color: '#94a3b8', font: { size: 10 } }, grid: { color: 'rgba(148,163,184,0.1)' } } }
+      interaction: { mode: 'index', intersect: false },
+      plugins: { 
+        legend: { display: false }, 
+        tooltip: { 
+          backgroundColor: 'rgba(15,23,42,0.95)',
+          titleColor: '#fff',
+          bodyColor: '#93c5fd',
+          borderColor: 'rgba(37,99,235,0.3)',
+          borderWidth: 1,
+          padding: 10,
+          displayColors: false,
+          callbacks: { 
+            title: ctx => ctx[0].label,
+            label: ctx => '$' + Math.round(ctx.parsed.y).toLocaleString()
+          } 
+        } 
+      },
+      scales: { 
+        x: { display: false, grid: { display: false } }, 
+        y: { 
+          ticks: { callback: v => '$' + (v/1000).toFixed(0) + 'K', color: '#94a3b8', font: { size: 10 } }, 
+          grid: { color: 'rgba(148,163,184,0.08)', drawBorder: false } 
+        } 
+      } 
     },
     plugins: window._vetIncStartDate ? [{
       id: 'vetincLine',
