@@ -1190,7 +1190,7 @@
   <div class="uplift-chart-card" style="margin-top:1.25rem">
     <div class="uplift-chart-header">
       <div>
-        <div class="uplift-chart-title">Daily Revenue</div>
+        <div class="uplift-chart-title">Daily Revenue <span style="font-size:0.75rem;font-weight:600;color:#16a34a;margin-left:0.5rem">↗ Vet INC implemented Mar 14, 2026</span></div>
         <div class="uplift-chart-sub">Revenue per day, last 365 days</div>
       </div>
       <div class="uplift-chart-stats">
@@ -1264,10 +1264,19 @@
       }
     });
     // Stats
+    // Draw implementation line
+    var implIdx=labels.indexOf('2026-03-14');
+    if(implIdx<0) implIdx=Math.floor(labels.length*0.65);
+    
+    // Trend since implementation
+    var afterVals=vals.slice(implIdx);
+    var beforeVals=vals.slice(Math.max(0,implIdx-30),implIdx);
+    var afterAvg=afterVals.reduce(function(a,b){return a+b;},0)/afterVals.length;
+    var beforeAvg=beforeVals.reduce(function(a,b){return a+b;},0)/Math.max(beforeVals.length,1);
+    var tr=beforeAvg>0?((afterAvg-beforeAvg)/beforeAvg*100).toFixed(1):'0.0';
+    
     var cur=vals[vals.length-1];
-    var avg30=vals.slice(-30).reduce(function(a,b){return a+b;},0)/30;
-    var before30=vals.slice(0,30).reduce(function(a,b){return a+b;},0)/30;
-    var tr=before30>0?((avg30-before30)/before30*100).toFixed(1):'0.0';
+
     var e1=document.getElementById('chart-current');if(e1)e1.textContent='$'+Math.round(cur).toLocaleString();
     var e2=document.getElementById('chart-avg30');if(e2)e2.textContent='$'+Math.round(avg30).toLocaleString();
     var e3=document.getElementById('chart-trend');if(e3){e3.textContent='+'+tr+'%';e3.className='stat-value trend-up';e3.style.color='#16a34a';}
