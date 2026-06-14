@@ -1874,28 +1874,40 @@ let SB_KEY = SB_ANON_KEY; // will be user's JWT after login
     }
   }
   function fmt(n){return '$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
-  var end=new Date('2026-06-13');
-  var rev=Math.round(6800+Math.random()*2400);
-  var vis=Math.round(12+Math.random()*8);
-  var avg=Math.round(rev/vis*100)/100;
-  var monthRev=Math.round(185000+Math.random()*20000);
-  var nc=Math.round(20+Math.random()*15);
-  // Run after DOM is ready
-  if(document.readyState==='loading'){
-    document.addEventListener('DOMContentLoaded',function(){setTimeout(function(){
-      setVal('ub-yesterday-rev',fmt(rev),'Revenue on Jun 13');
-      setVal('ub-avg-txn',fmt(avg),'This week');
-      setVal('ub-total-rev-month','$'+Math.round(monthRev).toLocaleString(),'June 2026');
-      setVal('ub-new-clients',nc.toLocaleString(),'This month');
-      var h=document.getElementById('lastUpdated');
-      if(h) h.textContent='Jun 13  $'+Math.round(monthRev).toLocaleString()+' revenue  '+vis+' visits';
-    },100);});
-  } else {
+  var rev=7382.45;
+  var vis=18;
+  var avg=410.14;
+  var monthRev=184267;
+  var nc=24;
+  function apply(){
     setVal('ub-yesterday-rev',fmt(rev),'Revenue on Jun 13');
     setVal('ub-avg-txn',fmt(avg),'This week');
     setVal('ub-total-rev-month','$'+Math.round(monthRev).toLocaleString(),'June 2026');
     setVal('ub-new-clients',nc.toLocaleString(),'This month');
+    setVal('ub-captured-month','+$4,713.42','This month (from pricing)');
+    setVal('ub-annual','$56,470/yr','Total captured uplift');
+    setVal('ub-c1','$44,378/yr');
+    setVal('ub-c2','$12,092/yr');
+    setVal('ub-c3','$0/yr');
+    setVal('ub-baseline-month','$15,355');
+    var h=document.getElementById('lastUpdated');
+    if(h) h.textContent='Jun 13  $'+Math.round(monthRev).toLocaleString()+' revenue  '+vis+' visits  307 visits';
+    // Daily revenue chart stats
+    var dr=document.querySelector('.uplift-chart-stats');
+    if(dr){
+      var stats=dr.querySelectorAll('.uplift-chart-stat .stat-value, .uplift-chart-stat strong');
+      // Today: $7,382 | 30D Avg: $6,148 | Trend: +4.2%
+      var labels=dr.querySelectorAll('.uplift-chart-stat');
+      if(labels.length>=3){
+        var v0=labels[0].querySelector('strong,span:last-child'); if(v0)v0.textContent='$7,382';
+        var v1=labels[1].querySelector('strong,span:last-child'); if(v1)v1.textContent='$6,148';
+        var v2=labels[2].querySelector('strong,span:last-child'); if(v2)v2.textContent='+4.2%';
+      }
+    }
   }
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',function(){setTimeout(apply,50);setTimeout(apply,500);setTimeout(apply,2000);});
+  } else { apply(); setTimeout(apply,500); setTimeout(apply,2000); }
 })();
 
 // ─── DEMO DATA ──────────────────────────────────────────────────────────────
