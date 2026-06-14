@@ -1101,7 +1101,7 @@ const DEMO_DATA = {
     ninetyNineTotal: 6455.49,
     ninetyNineCount: 50,
     combinedTotal: 43901.36,
-    capturedMonth: 4713.42.0,
+    capturedMonth: 4713.42,
     capturedTotal: 18880.0,
     implDate: "2025-12-15"
   }
@@ -1785,7 +1785,6 @@ function showPriceHistory(btn) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   document.querySelectorAll('section').forEach(s => s.style.display = 'none');
-  const ph = document.getElementById('priceHistorySection'); if (ph) ph.style.display = 'none';
   const ph = document.getElementById('priceHistorySection');
   if (ph) {
     ph.style.display = 'block';
