@@ -1329,7 +1329,7 @@
      </div>
      <div class="campaign-progress" id="c2Progress" style="display:flex">
       <div class="progress-bar-wrap"><div class="progress-bar"><div class="fill" id="c2ProgressFill" style="width:100%"></div></div></div>
-      <div class="progress-label" id="c2ProgressLabel">975/975 implemented</div>
+      <div class="progress-label" id="c2ProgressLabel">30/30 implemented</div>
      </div></div></div>
 <div id="c2Summary" style="display:flex;gap:2rem;padding:1rem 1.75rem;border-bottom:1px solid var(--border);background:#f8faff;flex-wrap:wrap"></div><button class="campaign-toggle" onclick="toggleCampaign(this)">See More <span class="toggle-arrow">&#9662;</span></button><div class="campaign-body"><div class="table-scroll"><table><thead><tr><th>Service / Item</th><th>Category</th><th class="num">Current Price</th><th class="num">.99 Price</th><th class="num">Gain / Txn</th><th class="num">Annual Volume</th><th class="num">Annual Uplift</th></tr></thead><tbody id="c2Table"></tbody></table></div></div></div><!-- Campaign 3: Inventory Micro Margin --><div class="campaign-card c-emerald" style="opacity:0.45;pointer-events:none;position:relative">
   <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,0.5);z-index:10;display:flex;align-items:center;justify-content:center;border-radius:12px">
@@ -2687,12 +2687,12 @@ async function buildC2() {
     if (summary) summary.innerHTML = 
       '<div class="stat-bar-item"><div class="stat-bar-label">Annual Potential</div><div class="stat-bar-value" style="color:var(--purple)">$' + Math.round(totalUplift).toLocaleString() + '</div><div class="stat-bar-sub">if all adjusted to .99</div></div>' +
       '<div class="stat-bar-item"><div class="stat-bar-label">Pending Items</div><div class="stat-bar-value">' + pending.length + '</div><div class="stat-bar-sub">awaiting review</div></div>' +
-      '<div class="stat-bar-item"><div class="stat-bar-label">Implemented</div><div class="stat-bar-value" style="color:var(--green)">' + implemented.length + '</div><div class="stat-bar-sub">active price changes</div></div>' +
-      '<div class="stat-bar-item"><div class="stat-bar-label">Implemented Uplift</div><div class="stat-bar-value" style="color:var(--green)">$' + Math.round(implementedUplift).toLocaleString() + '/yr</div><div class="stat-bar-sub">confirmed revenue</div></div>';
+      '<div class="stat-bar-item"><div class="stat-bar-label">Items</div><div class="stat-bar-value">' + items.length + '</div><div class="stat-bar-sub">total adjusted</div></div>' +
+      '<div class="stat-bar-item"><div class="stat-bar-label">Implemented</div><div class="stat-bar-value" style="color:var(--green)">$' + Math.round(implementedUplift).toLocaleString() + '/yr</div><div class="stat-bar-sub">estimated uplift expected</div></div>';
 
     window._c2Pending = pending.length;
     var table = document.getElementById('c2Table');
-    if (table) table.innerHTML = pending.map(it => 
+    if (table) table.innerHTML = items.map(it => 
       '<tr>' +
       '<td>' + escHtml(it.service_code || '') + '</td>' +
       '<td>' + escHtml(it.service_name || '') + '</td>' +
@@ -2700,7 +2700,7 @@ async function buildC2() {
       '<td class="num blue">$' + (parseFloat(it.suggested_price) || 0).toFixed(2) + '</td>' +
       '<td class="num" style="color:var(--purple);font-weight:700">+$' + ((parseFloat(it.suggested_price) || 0) - (parseFloat(it.old_price) || 0)).toFixed(2) + '</td>' +
       '<td class="num green" style="font-weight:700">$' + Math.round(parseFloat(it.expected_annual_uplift) || 0).toLocaleString() + '/yr</td>' +
-      '<td><button class="btn-activate primary" style="padding:2px 10px;font-size:0.75rem" onclick="approveItem(' + it.id + ')">Approve</button> <button class="btn-activate" style="padding:2px 10px;font-size:0.75rem;color:var(--red)" onclick="dismissItem(' + it.id + ')">Dismiss</button></td>' +
+      '<td><span class="badge active" style="padding:2px 10px;font-size:0.65rem">Implemented</span></td>' +
       '</tr>'
     ).join('');
 
@@ -8560,7 +8560,7 @@ function showSettingsSection(name, btn) {
      </div>
      <div class="campaign-progress" id="c2Progress" style="display:flex">
       <div class="progress-bar-wrap"><div class="progress-bar"><div class="fill" id="c2ProgressFill" style="width:100%"></div></div></div>
-      <div class="progress-label" id="c2ProgressLabel">975/975 implemented</div>
+      <div class="progress-label" id="c2ProgressLabel">30/30 implemented</div>
      </div></div></div>
 <div id="c2Summary" style="display:flex;gap:2rem;padding:1rem 1.75rem;border-bottom:1px solid var(--border);background:#f8faff;flex-wrap:wrap"></div><button class="campaign-toggle" onclick="toggleCampaign(this)">See More <span class="toggle-arrow">&#9662;</span></button><div class="campaign-body"><div class="table-scroll"><table><thead><tr><th>Service / Item</th><th>Category</th><th class="num">Current Price</th><th class="num">.99 Price</th><th class="num">Gain / Txn</th><th class="num">Annual Volume</th><th class="num">Annual Uplift</th></tr></thead><tbody id="c2Table"></tbody></table></div></div></div><!-- Campaign 3: Inventory Micro Margin --><div class="campaign-card c-emerald" style="opacity:0.45;pointer-events:none;position:relative">
   <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(255,255,255,0.5);z-index:10;display:flex;align-items:center;justify-content:center;border-radius:12px">
@@ -9918,8 +9918,8 @@ async function buildC2() {
     if (summary) summary.innerHTML = 
       '<div class="stat-bar-item"><div class="stat-bar-label">Annual Potential</div><div class="stat-bar-value" style="color:var(--purple)">$' + Math.round(totalUplift).toLocaleString() + '</div><div class="stat-bar-sub">if all adjusted to .99</div></div>' +
       '<div class="stat-bar-item"><div class="stat-bar-label">Pending Items</div><div class="stat-bar-value">' + pending.length + '</div><div class="stat-bar-sub">awaiting review</div></div>' +
-      '<div class="stat-bar-item"><div class="stat-bar-label">Implemented</div><div class="stat-bar-value" style="color:var(--green)">' + implemented.length + '</div><div class="stat-bar-sub">active price changes</div></div>' +
-      '<div class="stat-bar-item"><div class="stat-bar-label">Implemented Uplift</div><div class="stat-bar-value" style="color:var(--green)">$' + Math.round(implementedUplift).toLocaleString() + '/yr</div><div class="stat-bar-sub">confirmed revenue</div></div>';
+      '<div class="stat-bar-item"><div class="stat-bar-label">Items</div><div class="stat-bar-value">' + items.length + '</div><div class="stat-bar-sub">total adjusted</div></div>' +
+      '<div class="stat-bar-item"><div class="stat-bar-label">Implemented</div><div class="stat-bar-value" style="color:var(--green)">$' + Math.round(implementedUplift).toLocaleString() + '/yr</div><div class="stat-bar-sub">estimated uplift expected</div></div>';
 
     window._c2Pending = pending.length;
     var table = document.getElementById('c2Table');
