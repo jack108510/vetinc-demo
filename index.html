@@ -1960,7 +1960,7 @@ let SB_KEY = SB_ANON_KEY; // will be user's JWT after login
   var monthRev=184267;
   var nc=17;
   // Set dailyKpis directly so the chart renders
-  window.dailyKpis = DEMO_KPI;
+  window.dailyKpis = []; // demo: force original chart to bail, our inline chart handles it
   function apply(){
     setVal('ub-yesterday-rev',fmt(rev),'Revenue on Jun 13');
     setVal('ub-avg-txn',fmt(avg),'This week');
